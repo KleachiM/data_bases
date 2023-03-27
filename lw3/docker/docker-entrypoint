@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+j#!/usr/bin/env bash
 #
 # Environment variable parameters:
 # - USER_ID: developer's unix user id

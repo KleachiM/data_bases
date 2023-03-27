@@ -15,6 +15,6 @@ $app->addRoutingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(!$isProduction, true, true);
 
 $app->get('/hello', App\TestApiController::class . ':getHelloWorld');
-$app->post('course', )
+//$app->post('course', )
 
 $app->run();

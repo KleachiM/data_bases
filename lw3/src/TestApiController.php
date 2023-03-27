@@ -13,7 +13,8 @@ class TestApiController
 
     public function getHelloWorld(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $responseData = array('hello' => 'world');
+//        $responseData = array('hello' => 'world');
+        $responseData = array($request->getQueryParams());
 
         return $this->success($response, $responseData);
     }
