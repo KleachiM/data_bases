@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Controller\Request\CourseApiRequestParser;
 use App\Controller\Request\RequestValidationException;
+use App\Model\Service\ServiceProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -24,8 +25,9 @@ class CourseApiController
             return $this->badRequest($response, $exception->getFieldErrors());
         }
 
-//        courseId = ServiceProvider::getInstance()
+        ServiceProvider::getInstance()->getCourseService()->saveCourse($params);
 
+        return $this->success($response, ['id' => $params->getCourseId()]);
     }
 
     private function success(ResponseInterface $response, array $responseData): ResponseInterface

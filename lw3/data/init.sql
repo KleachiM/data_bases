@@ -3,7 +3,7 @@ USE wiki_backend;
 CREATE TABLE course
 (
     course_id VARCHAR(36) NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (course_id)
 );
@@ -64,9 +64,9 @@ CREATE TABLE course_material
     module_id VARCHAR(36) NOT NULL,
     course_id VARCHAR(36) NOT NULL,
     is_required BOOLEAN NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-    state_id INT,
+    state_id INT DEFAULT 1,
     PRIMARY KEY (module_id),
     FOREIGN KEY fk_course_id (course_id)
         REFERENCES course (course_id)

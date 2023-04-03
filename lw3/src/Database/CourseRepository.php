@@ -29,17 +29,20 @@ class CourseRepository
         return false;
     }
 
-    public function createCourse(Course $course)
+    public function addCourse(Course $course)
     {
+
         $query = <<<SQL
             INSERT INTO course
-                (courseId)
+                (course_id)
             VALUES
                 (:courseId);
-            INSERT INTO 
             SQL;
         $params = [
-            ':courseId' => $course->getCourseId();
-        ]
+            ':courseId' => $course->getCourseId()
+        ];
+
+        $this->connection->execute($query, $params);
+//        return $this->connection->getLastInsertId();
     }
 }

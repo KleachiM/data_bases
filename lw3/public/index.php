@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use App\TestApiController;
+//use App\TestApiController;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -15,6 +15,6 @@ $app->addRoutingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(!$isProduction, true, true);
 
 $app->get('/hello', App\TestApiController::class . ':getHelloWorld');
-//$app->post('course', )
+$app->post('/course', \App\Controller\CourseApiController::class . ':saveCourse');
 
 $app->run();
