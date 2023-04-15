@@ -1,6 +1,6 @@
 SET GLOBAL local_infile = 1;
 LOAD DATA LOCAL INFILE
- '/Users/mihailkalinin/учеба/Институт ПС/data_bases/lw2/station.csv'
+ '/Users/mihailkalinin/учеба/ips/data_base/repo/data_bases/lw2/station.csv'
  INTO TABLE station_data
  FIELDS TERMINATED BY ',' ENCLOSED BY '"'
  LINES TERMINATED BY '\n'
@@ -20,9 +20,9 @@ UPDATE station_data SET highway_name = REPLACE(highway_name, 'Малое Ону�
 UPDATE station_data SET station_name = REPLACE(station_name, ' ', null) WHERE station_name = ' ';
 
 INSERT INTO highway 
-SELECT DISTINCT 
- highway_name 
-FROM station_data;
+	SELECT DISTINCT 
+		highway_name 
+	FROM station_data;
 
 delimiter $$
 CREATE FUNCTION get_distance(kilometers INT, meters INT)

@@ -25,11 +25,7 @@ class CourseService
 
     public function saveCourse(SaveCourseParams $params)
     {
-//        if ($this->courseRepository->isAlreadyExist($params->getCourseId()))
-//        {
-//            throw new CourseAlreadyExistsException("Course {$params->getCourseId()} already exist!");
-//        }
-
+//TODO: убрать materialrepository
         return $this->synchronization->doWithTransaction(function () use ($params)
         {
             $course = new Course(
@@ -39,9 +35,8 @@ class CourseService
                 new \DateTimeImmutable(),
                 null
             );
-            $this->materialRepository->addMaterial($course);
             $this->courseRepository->addCourse($course);
-//            return $this->courseRepository->addCourse($course);
+            $this->materialRepository->addMaterial($course);
         });
     }
 }
