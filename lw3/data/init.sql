@@ -26,37 +26,7 @@ CREATE TABLE course_status
     PRIMARY KEY (enrollment_id),
     FOREIGN KEY fk_state_id (state_id)
         REFERENCES structure_state (id)
-        ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-CREATE TABLE course_module_status
-(
-    enrollment_id VARCHAR(36) NOT NULL,
-    module_id VARCHAR(36) NOT NULL,
-    progress DECIMAL(3,0) DEFAULT 0,
-    duration INT,
-    state_id INT,
-    PRIMARY KEY (enrollment_id, module_id),
-    FOREIGN KEY fk_module_status (state_id)
-        REFERENCES structure_state (id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    INDEX idx_module_id (module_id)
-);
-
-CREATE TABLE course_enrollment
-(
-    enrollment_id VARCHAR(36) NOT NULL ,
-    course_id VARCHAR(36) NOT NULL ,
-    PRIMARY KEY (enrollment_id),
-    FOREIGN KEY fk_course_status (enrollment_id)
-        REFERENCES course_status (enrollment_id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY fk_course_module_status (enrollment_id)
-        REFERENCES course_module_status (enrollment_id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY fk_course (course_id)
-        REFERENCES course (course_id)
-        ON UPDATE CASCADE ON DELETE CASCADE
+        ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE course_material
@@ -70,11 +40,41 @@ CREATE TABLE course_material
     PRIMARY KEY (module_id),
     FOREIGN KEY fk_course_id (course_id)
         REFERENCES course (course_id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY fk_course_module_status (module_id)
-        REFERENCES course_module_status (module_id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
+        ON UPDATE CASCADE ON DELETE RESTRICT ,
     FOREIGN KEY fk_material_status (state_id)
         REFERENCES structure_state (id)
-        ON UPDATE CASCADE ON DELETE CASCADE
-)
+        ON UPDATE CASCADE ON DELETE SET NULL
+);
+
+CREATE TABLE course_module_status
+(
+    enrollment_id VARCHAR(36) NOT NULL,
+    module_id VARCHAR(36) NOT NULL,
+    progress DECIMAL(3,0) DEFAULT 0,
+    duration INT,
+    state_id INT,
+    PRIMARY KEY (enrollment_id, module_id),
+    FOREIGN KEY fk_module_status (state_id)
+        REFERENCES structure_state (id)
+        ON UPDATE CASCADE ON DELETE SET NULL ,
+    FOREIGN KEY fk_course_material (module_id)
+        REFERENCES course_material (module_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT ,
+    INDEX idx_module_id (module_id)
+);
+
+CREATE TABLE course_enrollment
+(
+    enrollment_id VARCHAR(36) NOT NULL ,
+    course_id VARCHAR(36) NOT NULL ,
+    PRIMARY KEY (enrollment_id),
+    FOREIGN KEY fk_course_status (enrollment_id)
+        REFERENCES course_status (enrollment_id)
+        ON UPDATE CASCADE ON DELETE CASCADE ,
+    FOREIGN KEY fk_course_module_status (enrollment_id)
+        REFERENCES course_module_status (enrollment_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT ,
+    FOREIGN KEY fk_course (course_id)
+        REFERENCES course (course_id)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);

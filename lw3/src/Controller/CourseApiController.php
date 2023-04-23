@@ -25,11 +25,24 @@ class CourseApiController
             return $this->badRequest($response, $exception->getFieldErrors());
         }
 
-
-
         ServiceProvider::getInstance()->getCourseService()->saveCourse($params);
 
         return $this->success($response, ['id' => $params->getCourseId()]);
+    }
+
+    public function deleteCourse(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        try
+        {
+            $courseId = CourseApiRequestParser::parseStringUuid((array)$request->getParsedBody(), 'courseId');
+        }
+        catch (RequestValidationException $exception)
+        {
+            return $this->badRequest($response, $exception->getFieldErrors());
+        }
+
+        ServiceProvider::getInstance()->getCourseService()->deleteCourse($courseId);
+        return $this->success($response, []);
     }
 
     private function success(ResponseInterface $response, array $responseData): ResponseInterface

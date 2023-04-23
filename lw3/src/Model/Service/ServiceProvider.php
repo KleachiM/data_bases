@@ -12,7 +12,6 @@ final class ServiceProvider
 {
     private ?CourseService $courseService = null;
     private ?CourseRepository $courseRepository = null;
-    private ?MaterialRepository $materialRepository = null;
 
     public static function getInstance(): self
     {
@@ -29,7 +28,7 @@ final class ServiceProvider
         if ($this->courseService === null)
         {
             $synchronization = new Synchronization(ConnectionProvider::getConnection());
-            $this->courseService = new CourseService($synchronization, $this->getCourseRepository(), $this->getMaterialRepositiry());
+            $this->courseService = new CourseService($synchronization, $this->getCourseRepository());
         }
         return $this->courseService;
     }
@@ -41,14 +40,5 @@ final class ServiceProvider
             $this->courseRepository = new CourseRepository(ConnectionProvider::getConnection());
         }
         return $this->courseRepository;
-    }
-
-    private function getMaterialRepositiry(): MaterialRepository
-    {
-        if ($this->materialRepository === null)
-        {
-            $this->materialRepository = new MaterialRepository(ConnectionProvider::getConnection());
-        }
-        return $this->materialRepository;
     }
 }

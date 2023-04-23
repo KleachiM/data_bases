@@ -15,20 +15,6 @@ class CourseRepository
         $this->connection = $connection;
     }
 
-    public function isAlreadyExist(string $courseId): bool
-    {
-        $query = <<<SQL
-            SELECT course_id FROM course
-            SQL;
-        $params = [$courseId];
-        $stmt = $this->connection->execute($query, $params);
-        if ($row = $stmt->fetch(\PDO::FETCH_ASSOC))
-        {
-            return true;
-        }
-        return false;
-    }
-
     public function addCourse(Course $course)
     {
 
@@ -43,6 +29,30 @@ class CourseRepository
         ];
 
         $this->connection->execute($query, $params);
-//        return $this->connection->getLastInsertId();
+    }
+
+    public function addMaterial(Course $course)
+    {
+        $courseId = $course->getCourseId();
+        $modules = $course->getModuleIds();
+        $requiredModules = $course->getRequiredModuleIds();
+        $modulesToAdd = [];
+        foreach ($modules as $module)
+        {
+            $is_required = (in_array($module, $requiredModules)) ? 1 : 0;
+            $tmpArr = array("'" .$module ."'", "'" .$courseId ."'", strval($is_required));
+            $modulesToAdd[] = $tmpArr;
+        }
+        foreach ($modulesToAdd as $module)
+        {
+            $str = '(' .implode(', ', $module) .')';
+            $query = "INSERT INTO `wiki_backend`.course_material (module_id, course_id, is_required) VALUES " . $str;
+            $this->connection->execute($query);
+        }
+    }
+
+    public function deleteCourse(string $uuid)
+    {
+        //TODO: доделать удаление курса
     }
 }

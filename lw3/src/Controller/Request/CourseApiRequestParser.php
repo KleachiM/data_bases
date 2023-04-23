@@ -11,11 +11,17 @@ class CourseApiRequestParser
     private const MAX_MODULE_LENGTH = 36;
     public static function parseSaveCourseParams(array $parameters): SaveCourseParams
     {
-        return new SaveCourseParams(
-            self::parseStringUuid($parameters, 'courseId', self::MAX_COURSE_LENGTH),
-            self::parseStringUuidsArray($parameters, 'moduleIds', self::MAX_MODULE_LENGTH),
-            self::parseStringUuidsArray($parameters, 'requiredModuleIds', self::MAX_MODULE_LENGTH)
-        );
+        $courseId = self::parseStringUuid($parameters, 'courseId', self::MAX_COURSE_LENGTH);
+        $moduleIds = self::parseStringUuidsArray($parameters, 'moduleIds', self::MAX_MODULE_LENGTH);
+        $requiredModuleIds = self::parseStringUuidsArray($parameters, 'requiredModuleIds', self::MAX_MODULE_LENGTH);
+        if (count($requiredModuleIds) > 0)
+        {
+            if (!self::allRequiredModuleIdsInModuleIds($moduleIds, $requiredModuleIds))
+            {
+                throw new RequestValidationException(['no module id' => 'one of required module id not found in module id']);
+            }
+        }
+        return new SaveCourseParams($courseId, $moduleIds, $requiredModuleIds);
     }
 
     public static function parseStringUuid(array $parameters, string $name, ?int $maxLength = null): string
@@ -29,7 +35,7 @@ class CourseApiRequestParser
         {
             throw new RequestValidationException([$name => "String value too long (exceeds $maxLength characters)"]);
         }
-        if (!self::isValidUuid($value))
+        if (!UuidValidator::isValidUuid($value))
         {
             throw new RequestValidationException([$name => "Not valid uuid"]);
         }
@@ -49,7 +55,7 @@ class CourseApiRequestParser
             {
                 throw new RequestValidationException([$name => "String value too long (exceeds $maxLength characters) at index $index"]);
             }
-            if (!self::isValidUuid($value))
+            if (!UuidValidator::isValidUuid($value))
             {
                 throw new RequestValidationException([$name => "Not valid uuid"]);
             }
@@ -60,6 +66,10 @@ class CourseApiRequestParser
     public static function parseArray(array $parameters, string $name): array
     {
         $values = $parameters[$name] ?? null;
+        if ($values === null)
+        {
+            return array();
+        }
         if (!is_array($values))
         {
             throw new RequestValidationException([$name => 'Not an array']);
@@ -67,10 +77,14 @@ class CourseApiRequestParser
         return $values;
     }
 
-    public static function isValidUuid( $uuid ) {
-        if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $uuid) !== 1)
+    public static function allRequiredModuleIdsInModuleIds(array $moduleIds, array $requiredModuleIds): bool
+    {
+        foreach ($requiredModuleIds as &$moduleId)
         {
-            return false;
+            if (!in_array($moduleId, $moduleIds))
+            {
+                return false;
+            }
         }
         return true;
     }
