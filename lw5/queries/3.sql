@@ -24,7 +24,7 @@
 
 -- CREATE INDEX rating_idx ON film (rating); 
 
-SELECT u.last_name, u.first_name, SUM(u.films_count) 
+SELECT u.last_name, u.first_name, SUM(u.films_count) as total_count
 FROM
 (
 	SELECT a.first_name, a.last_name, COUNT(fa.film_id) as films_count
@@ -46,3 +46,4 @@ FROM
     GROUP BY a.actor_id
 ) as u
 GROUP BY u.last_name, u.first_name
+HAVING total_count > 10
